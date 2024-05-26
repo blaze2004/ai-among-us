@@ -94,5 +94,5 @@
     },
     "include": [
         "src/**/*"
-, "../client/src/lib/names.ts"    ],
+, "../client/src/lib/names-generator.ts"    ],
 }

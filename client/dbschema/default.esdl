@@ -11,6 +11,15 @@ module default {
         property createdAt -> datetime {
             default := datetime_current();
         };
+        property score -> int64 {
+            default := 0;
+        };
+        property wins -> int64 {
+            default := 0;
+        };
+        property losses -> int64 {
+            default := 0;
+        };
     }
  
     type Account {
@@ -62,6 +71,27 @@ module default {
         };
  
         constraint exclusive on ((.identifier, .token))
+    }
+
+    type RoomUser {
+        required property roomId := .room.id;
+        required property userId := .user.id;
+        required link room -> Game {
+            on target delete delete source;
+        };
+        required link user -> User {
+            on target delete delete source;
+        };
+    }
+
+    type Game {
+        required property winnerId := .winner.id;
+        required link winner -> User {
+            on target delete delete source;
+        };
+        property playedAt -> datetime {
+            default := datetime_current();
+        };
     }
 }
  
