@@ -9,10 +9,12 @@ export enum ChatEvents {
 export interface JoinRoomPayload { 
     roomId: string;
     userId: string;
+    username: string;
 }
 
 export interface MessagePayload {
     roomId: string;
     userId: string;
+    username: string;
     content: string;
 }
