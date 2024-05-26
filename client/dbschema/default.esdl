@@ -73,21 +73,6 @@ module default {
         constraint exclusive on ((.identifier, .token))
     }
 
-    type RoomUser {
-        required property roomId := .room.id;
-        required property userId := .user.id;
-        required property winner -> bool {
-            default := false;
-        }
-        required property username -> str;
-        required link room -> Room {
-            on target delete delete source;
-        };
-        required link user -> User {
-            on target delete delete source;
-        };
-    }
-
     type Room {
         required property name -> str;
         property playedAt -> datetime {
@@ -98,6 +83,13 @@ module default {
         };
         property private -> bool {
             default := false;
+        };
+
+        multi players : User {
+            winner: bool {
+                default := false;
+            };
+            username: str;
         };
     }
 }

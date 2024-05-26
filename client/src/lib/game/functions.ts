@@ -53,10 +53,9 @@ export const createNewRoom=async ({ name, isPrivate }: { name: string, isPrivate
 
 export const getRoomPlayers=async (roomId: string) => {
     try {
-        const players=await e.select(e.RoomUser, (roomUser) => ({
-            filter: e.op(roomUser.roomId, "=", e.uuid(roomId)),
-            userId: true,
-            username: true,
+        const players=await e.select(e.Room, (room) => ({
+            filter_single: e.op(room.id, "=", e.uuid(roomId)),
+            users: true,
         })).run(dbClient);
 
         return players;
@@ -77,10 +76,7 @@ export const joinGameRoom=async (roomId: string, username: string) => {
 
         const userRoomRecord = await e.select(e.RoomUser, (roomUser) => ({
             id: true,
-            filter: e.op(e.op(roomUser.roomId, "=", e.uuid(roomId)), "AND", e.op(roomUser.userId, "=", e.select(e.User, (user) => ({
-                filter_single: e.op(user.email, "=", session.user.email)
-            })),
-        )),
+            filter_single: e.op(e.op(roomUser.roomId, "=", e.uuid(roomId)), "AND", e.op(roomUser.username, "=", username)),
         })).run(dbClient);
 
         if(userRoomRecord.length > 0) {
