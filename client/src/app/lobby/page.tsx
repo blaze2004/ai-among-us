@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { getRoomPlayers } from "@/lib/game/functions";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { joinGameRoom } from "../../lib/game/functions";
 import { generateName } from "../../lib/names-generator";
@@ -12,7 +12,6 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
 
     const roomId=searchParams.roomId as string|undefined;
     const router=useRouter();
-    const username=generateName();
 
     const [players, setPlayers]=useState<{
         userId: string;
@@ -23,38 +22,40 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
         router.push('/');
     }
 
-    useEffect(() => {
+    const joinRoom=useCallback(async () => {
+        if (!roomId) return;
+        const playersInfo=await getRoomPlayers(roomId);
 
-        const joinRoom=async () => {
-            if (!roomId) return;
-            const players=await getRoomPlayers(roomId);
-
-            if (players) {
-                if (players.length<4) {
-                    if (!await joinGameRoom(roomId, username)) {
-                        toast.error('Failed to join room');
-                        setTimeout(() => {
-                            router.push('/');
-                        }, 1000);
-                    }
-                }
-                else {
-                    toast.error('Room is full');
+        if (playersInfo) {
+            if (playersInfo.length<4) {
+                if (!await joinGameRoom(roomId, generateName())) {
+                    toast.error('Failed to join room');
                     setTimeout(() => {
                         router.push('/');
                     }, 1000);
                 }
             }
+            else {
+                toast.error('Room is full');
+                setTimeout(() => {
+                    router.push('/');
+                }, 1000);
+            }
         }
+    }, [router, roomId]);
 
+    useEffect(() => {
         joinRoom();
+    }, [joinRoom]);
+
+    useEffect(() => {
 
         const fetchPlayers=setInterval(async () => {
             if (!roomId) return;
-            const players=await getRoomPlayers(roomId);
-            if (players) {
-                setPlayers(players);
-                if (players.length==4) {
+            const playersInfo=await getRoomPlayers(roomId);
+            if (playersInfo) {
+                setPlayers(playersInfo);
+                if (playersInfo.length==4) {
                     clearInterval(fetchPlayers);
                     router.push(`/chat?roomId=${roomId}`);
                 }
