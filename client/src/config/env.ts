@@ -17,7 +17,8 @@ export const env=createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     EDGEDB_INSTANCE: process.env.EDGEDB_INSTANCE,
     EDGEDB_SECRET_KEY: process.env.EDGEDB_SECRET_KEY,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    NEXTAUTH_SECRET: "secret",
+    // process.env.NEXTAUTH_SECRET
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
   },
 });
