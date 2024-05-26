@@ -18,10 +18,6 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
         username: string;
     }[]>([]);
 
-    if (!roomId) {
-        router.push('/');
-    }
-
     const joinRoom=useCallback(async () => {
         if (!roomId) return;
         const playersInfo=await getRoomPlayers(roomId);
@@ -64,6 +60,12 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
 
         return () => clearInterval(fetchPlayers);
     });
+
+    if (!roomId) {
+        return {
+            notfound: true
+        }
+    }
 
     return (
         <div>

@@ -74,6 +74,18 @@ export const joinGameRoom=async (roomId: string, username: string) => {
     }
 
     try {
+
+        const userRoomRecord = await e.select(e.RoomUser, (roomUser) => ({
+            id: true,
+            filter: e.op(e.op(roomUser.roomId, "=", e.uuid(roomId)), "AND", e.op(roomUser.userId, "=", e.select(e.User, (user) => ({
+                filter_single: e.op(user.email, "=", session.user.email)
+            })),
+        )),
+        })).run(dbClient);
+
+        if(userRoomRecord.length > 0) {
+            return true;
+        }
         
         await e.insert(e.RoomUser, {
             room: e.select(e.Room, (room) => ({
