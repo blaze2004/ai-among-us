@@ -21,13 +21,14 @@ const HomePage=() => {
         >
           Find the AI among other humans. A simple game to test your AI content detection skills.
         </p>
-        <Link href={"/chat"} className={buttonVariants({ size: "lg" })}>
+        <Link href={"/new"} className={buttonVariants({ size: "lg" })}>
           <PlayIcon className='mr-2 h-6 w-6' />
           Play Now
         </Link>
       </div>
 
-    </div>)
+    </div>
+  );
 }
 
 export default HomePage;

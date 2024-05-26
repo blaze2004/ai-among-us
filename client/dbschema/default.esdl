@@ -76,7 +76,11 @@ module default {
     type RoomUser {
         required property roomId := .room.id;
         required property userId := .user.id;
-        required link room -> Game {
+        required property winner -> bool {
+            default := false;
+        }
+        required property username -> str;
+        required link room -> Room {
             on target delete delete source;
         };
         required link user -> User {
@@ -84,13 +88,16 @@ module default {
         };
     }
 
-    type Game {
-        required property winnerId := .winner.id;
-        required link winner -> User {
-            on target delete delete source;
-        };
+    type Room {
+        required property name -> str;
         property playedAt -> datetime {
             default := datetime_current();
+        };
+        property closed -> bool {
+            default := false;
+        };
+        property private -> bool {
+            default := false;
         };
     }
 }
