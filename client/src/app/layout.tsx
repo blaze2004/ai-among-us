@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { LayoutProps } from "@/types";
 import { Provider } from "@/components/provider";
+import Wrapper from './wrapper'
 
 const inter=Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: LayoutProps) {
     <html lang="en">
       <body className={inter.className}>
         <Provider>
+          <Wrapper>
           {children}
+          </Wrapper>
           <Toaster position={"top-center"} />
         </Provider>
       </body>
