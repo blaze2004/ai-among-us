@@ -31,6 +31,10 @@ export default async function Page({ searchParams }: { searchParams: { [key: str
         notFound();
     }
 
+    if(players.length!=4){
+        notFound();
+    }
+
     const session=await getServerSession();
 
     if (!session) {

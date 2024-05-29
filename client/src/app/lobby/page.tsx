@@ -26,7 +26,7 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
             const playersInfo=await getRoomPlayers(roomId);
     
             if (playersInfo) {
-                if (playersInfo.length<3) {
+                if (playersInfo.length<4) {
                     if (!await joinGameRoom(roomId, generateName())) {
                         toast.error('Failed to join room');
                         setTimeout(() => {
