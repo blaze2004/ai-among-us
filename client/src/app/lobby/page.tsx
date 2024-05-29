@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { getRoomPlayers } from "@/lib/game/functions";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { joinGameRoom } from "../../lib/game/functions";
-import { generateName } from "../../lib/names-generator";
+import { joinGameRoom } from "@/lib/game/functions";
+import { generateName } from "@/lib/names-generator";
+import { notFound, useRouter } from 'next/navigation'
 
 export default function Page({ searchParams }: { searchParams: { [key: string]: string|string[]|undefined } }) {
 
@@ -14,35 +14,37 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
     const router=useRouter();
 
     const [players, setPlayers]=useState<{
-        userId: string;
+        id: string;
         username: string;
+        winner: boolean;
     }[]>([]);
 
-    const joinRoom=useCallback(async () => {
-        if (!roomId) return;
-        const playersInfo=await getRoomPlayers(roomId);
+    useEffect(() => {
 
-        if (playersInfo) {
-            if (playersInfo.length<4) {
-                if (!await joinGameRoom(roomId, generateName())) {
-                    toast.error('Failed to join room');
+        const joinRoom = async () => {
+            if (!roomId) return;
+            const playersInfo=await getRoomPlayers(roomId);
+    
+            if (playersInfo) {
+                if (playersInfo.length<3) {
+                    if (!await joinGameRoom(roomId, generateName())) {
+                        toast.error('Failed to join room');
+                        setTimeout(() => {
+                            router.push('/');
+                        }, 1000);
+                    }
+                }
+                else {
+                    toast.error('Room is full');
                     setTimeout(() => {
                         router.push('/');
                     }, 1000);
                 }
             }
-            else {
-                toast.error('Room is full');
-                setTimeout(() => {
-                    router.push('/');
-                }, 1000);
-            }
         }
-    }, [router, roomId]);
 
-    useEffect(() => {
         joinRoom();
-    }, [joinRoom]);
+    }, [roomId, router]);
 
     useEffect(() => {
 
@@ -59,12 +61,10 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
         }, 1000);
 
         return () => clearInterval(fetchPlayers);
-    });
+    }, [roomId, router]);
 
     if (!roomId) {
-        return {
-            notfound: true
-        }
+        notFound();
     }
 
     return (
@@ -95,7 +95,7 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
                     <h2 className='text-2xl font-bold'>Players</h2>
                     <ul className='mt-4'>
                         {players.map((player) => (
-                            <li key={player.userId} className='text-lg'>{player.username}</li>
+                            <li key={player.id} className='text-lg'>{player.username}</li>
                         ))}
                     </ul>
                 </div>

@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions={
     },
     theme: {
         logo: "/vercel.svg",
-        brandColor: "##64748b",
+        brandColor: "#64748b",
     },
     providers: [
         GoogleProvider({
