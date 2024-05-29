@@ -33,8 +33,8 @@ export const getRoomPlayers=async (roomId: string) => {
             },
         })).run(dbClient);
 
-        if(players){
-            const playersInfo = players.players.map((player)=>({
+        if (players) {
+            const playersInfo=players.players.map((player) => ({
                 id: player.id,
                 username: player["@username"],
                 winner: player["@winner"]
@@ -68,7 +68,7 @@ export const joinGameRoom=async (roomId: string, username: string) => {
           FILTER .email = <str>$email
           LIMIT 1
         )
-      }`, {roomId, username, email: session.user.email})
+      }`, { roomId, username, email: session.user!.email })
 
         return true;
 

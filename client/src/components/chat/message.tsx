@@ -1,19 +1,19 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
-import {Message} from ".";
+import { Message } from ".";
 
-function getColorForUsername(username) {
-    const colors = ['#4A90E2', '#A0AABF', '#7ED321', '#9B51E0'];
-    let hash = 0;
-    for (let i = 0; i < username.length; i++) {
-        hash = username.charCodeAt(i) + ((hash << 5) - hash);
+function getColorForUsername(username: string) {
+    const colors=['#4A90E2', '#A0AABF', '#7ED321', '#9B51E0'];
+    let hash=0;
+    for (let i=0; i<username.length; i++) {
+        hash=username.charCodeAt(i)+((hash<<5)-hash);
     }
-    const index = Math.abs(hash) % colors.length;
+    const index=Math.abs(hash)%colors.length;
     return colors[index];
 }
 
-export const MessageBox=({ username, content, self }: Message&{self: boolean}) => {
+export const MessageBox=({ username, content, self }: Message&{ self: boolean }) => {
     return (
         <div
             className={cn(
@@ -23,8 +23,8 @@ export const MessageBox=({ username, content, self }: Message&{self: boolean}) =
                 self? "flex-row-reverse":"flex-col"
             )}>
                 {
-                    !self && (
-                        <p style={{color: getColorForUsername(username)}}>{username}</p>
+                    !self&&(
+                        <p style={{ color: getColorForUsername(username) }}>{username}</p>
                     )
                 }
                 <ReactMarkdown

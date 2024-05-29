@@ -1,8 +1,7 @@
 "use client"
 
-import { LoadingCircle } from '@/components/icons';
 import { Button, buttonVariants } from '@/components/ui/button'
-import { FrameIcon, PlusCircledIcon } from '@radix-ui/react-icons';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import {
     Dialog,

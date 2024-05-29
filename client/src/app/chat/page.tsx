@@ -1,11 +1,9 @@
 import ChatPage from "@/components/chat";
 import Header from "@/components/chat/header";
 import e from "../../../dbschema/edgeql-js";
-import { getRoomPlayers } from "@/lib/game/functions";
 import dbClient from "@/lib/db/client";
-import socket from "@/lib/socket";
 import { getServerSession } from "next-auth";
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 export default async function Page({ searchParams }: { searchParams: { [key: string]: string|string[]|undefined } }) {
 
@@ -15,9 +13,24 @@ export default async function Page({ searchParams }: { searchParams: { [key: str
         notFound();
     }
 
+    const session=await getServerSession();
+    const user=await e.select(e.User, () => ({
+        id: true,
+        filter_single: { email: session!.user!.email! }
+    })).run(dbClient);
+
+    if (!user) {
+        notFound();
+    }
+
     const roomInfo=await e.select(e.Room, (room) => ({
         name: true,
         id: true,
+        players: {
+            id: true,
+            "@username": true,
+            "@winner": true
+        },
         filter_single: e.op(room.id, "=", e.uuid(roomId))
     })).run(dbClient);
 
@@ -25,32 +38,20 @@ export default async function Page({ searchParams }: { searchParams: { [key: str
         notFound();
     }
 
-    const players=await getRoomPlayers(roomId);
+    const players=roomInfo.players.map((player) => ({
+        id: player.id,
+        username: player["@username"],
+        winner: player["@winner"]
+    }));
 
-    if (!players) {
-        notFound();
+    if (players.length!=4) {
+        redirect(`/lobby?roomId=${roomId}`)
     }
 
-    if(players.length!=4){
-        notFound();
+    const currentUser: { id: string; username: string }={
+        id: user.id,
+        username: players.filter((player) => player.id===currentUser.id)[0].username!
     }
-
-    const session=await getServerSession();
-
-    if (!session) {
-        notFound();
-    }
-
-    const currentUser=await e.select(e.User, (user) => ({
-        filter_single: e.op(user.email, "=", session.user.email),
-        id: true
-    })).run(dbClient);
-
-    if (!currentUser) {
-        redirect('/');
-    }
-
-    currentUser["username"] = players.filter((player)=>player.id === currentUser.id)[0].username;
 
     return (
         <main className="flex flex-col items-center justify-between pb-40">

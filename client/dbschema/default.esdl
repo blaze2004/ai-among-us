@@ -11,15 +11,6 @@ module default {
         property createdAt -> datetime {
             default := datetime_current();
         };
-        property score -> int64 {
-            default := 0;
-        };
-        property wins -> int64 {
-            default := 0;
-        };
-        property losses -> int64 {
-            default := 0;
-        };
     }
  
     type Account {

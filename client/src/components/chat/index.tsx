@@ -3,21 +3,21 @@
 import { useState, useRef, useEffect, Fragment } from "react";
 import ChatInputField from "./input";
 import socket from "@/lib/socket";
-import {MessageBox} from "./message";
+import { MessageBox } from "./message";
 
 export interface Message { userId: string; username: string; content: string; }
 
-export default function ChatPage({ roomId, currentUser }: { players: { id: string; username: string; winner: boolean; }[]; roomId: string; currentUser: { id: string; username: string; } }) {
+export default function ChatPage({ roomId, currentUser }: { players: { id: string; username: string|null; winner: boolean|null; }[]; roomId: string; currentUser: { id: string; username: string; } }) {
     const [input, setInput]=useState("");
     const [messages, setMessages]=useState<Message[]>([]);
-    
+
     const formRef=useRef<HTMLFormElement>(null);
     const inputRef=useRef<HTMLTextAreaElement>(null);
 
-    const handleSubmit=async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit=(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        await socket.emit("message", {
+        socket.emit("message", {
             roomId: roomId,
             userId: currentUser.id,
             username: currentUser.username,
@@ -57,15 +57,15 @@ export default function ChatPage({ roomId, currentUser }: { players: { id: strin
 
     return (
         <>
-           <div className="mt-8 pt-8 w-full">
-           {
-                messages.map((message, index) => (
-                    <Fragment key={index}>
-                    <MessageBox self={message.userId===currentUser.id} {...message} />
-                    <div ref={messagesEndRef} />
-                    </Fragment>
-                ))
-            }
+            <div className="mt-8 pt-8 w-full">
+                {
+                    messages.map((message, index) => (
+                        <Fragment key={index}>
+                            <MessageBox self={message.userId===currentUser.id} {...message} />
+                            <div ref={messagesEndRef} />
+                        </Fragment>
+                    ))
+                }
             </div>
 
             <div className="fixed bottom-0 flex bg-background w-full flex-col items-center space-y-3 p-5 pb-3 md:px-0">

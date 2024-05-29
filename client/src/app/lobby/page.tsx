@@ -15,16 +15,16 @@ export default function Page({ searchParams }: { searchParams: { [key: string]: 
 
     const [players, setPlayers]=useState<{
         id: string;
-        username: string;
-        winner: boolean;
+        username: string|null;
+        winner: boolean|null;
     }[]>([]);
 
     useEffect(() => {
 
-        const joinRoom = async () => {
+        const joinRoom=async () => {
             if (!roomId) return;
             const playersInfo=await getRoomPlayers(roomId);
-    
+
             if (playersInfo) {
                 if (playersInfo.length<4) {
                     if (!await joinGameRoom(roomId, generateName())) {
